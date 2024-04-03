@@ -1,10 +1,18 @@
 const filterReducer = (state, action) => {
     switch (action.type) {
         case "LOAD_FILTER_PRODUCTS":
+
+        let priceArr = action.payload.map((curElem) => curElem.price); 
+        // console.log(" priceArr", priceArr);
+
+            let maxPrice = Math.max( ...priceArr);
+            // console.log('maxPrice', maxPrice);
+
             return {
                 ...state,
-                filter_products: [...action.payload],
+                filter_products: action.payload,
                 all_products: [...action.payload],
+                filters: { ...state.filters, maxPrice, price: maxPrice },
             };
 
             case "SET_GRID_VIEW":
@@ -61,6 +69,7 @@ const filterReducer = (state, action) => {
 
                     case "UPDATE_FILTERS_VALUE":
                         const {name, value} = action.payload
+                        console.log({[name]: value});
                         return{
                             ...state,
                             filters: {
@@ -73,24 +82,64 @@ const filterReducer = (state, action) => {
                             let {all_products} = state;
                             let tempFilterProduct = [...all_products];
 
-                            const { text, category } = state.filters;
-                            console.log({state, text, tempFilterProduct})
+                            const { text, category, company, color, price } = state.filters;
+
+
+                            // console.log({category, company, text, })
                             if (text) {
-                                tempFilterProduct = tempFilterProduct.filter((curElem) => {
+                                tempFilterProduct = tempFilterProduct.filter
+                                ((curElem) => {
+                                    // console.log(curElem);
+                                    // console.log(curElem.name);
+                                    // console.log(curElem.name.includes(text), curElem.name, text);
                                     return curElem.name.toLowerCase().includes(text);
                                 });
                             }
 
-                            if (category) {
+                            if (category !== "all") {
                                 tempFilterProduct = tempFilterProduct.filter((curElem) => {
+                                    console.log(curElem.category, category);
                                     return curElem.category === category;
-                                })
+                                });
+                            }
+
+                            if (company !== "all") {
+                                tempFilterProduct = tempFilterProduct.filter((curElem) => {
+                                    return curElem.company === company;
+                                });
+                            }
+
+                            if (color !== "all") {
+                                tempFilterProduct = tempFilterProduct.filter((curElem) =>
+                                curElem.colors.includes(color)
+                                );
+                            }
+
+                            if (price === 0) {
+                                tempFilterProduct = tempFilterProduct.filter((curElem) => curElem.price == price);
+                            } else {
+                                tempFilterProduct = tempFilterProduct.filter((curElem) => curElem.price < price);
                             }
 
                             return{
                                 ...state,
                                 filter_products: tempFilterProduct
                             }
+
+                            case "CLEAR_FILTERS":
+                                return {
+                                    ...state,
+                                    filters: {
+                                        ...state.filters,
+                                        text: "",
+                                        category: "all",
+                                        company: "all",
+                                        color: "all",
+                                        maxPrice: 0,
+                                        price: state.filters.maxPrice,
+                                        minPrice: state.filters.maxPrice,                              
+                                    },
+                                }
 
             default:
                 return state;

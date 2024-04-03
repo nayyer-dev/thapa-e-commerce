@@ -18,7 +18,7 @@ const API = "https://api.pujakaitem.com/api/products";
 
 const SingleProduct = () => {
   const {getSingleProduct, isSingleLoading, singleProduct} = useProductContext();
-  // console.log('singleProduct', singleProduct);
+  console.log('singleProduct', singleProduct);
 
   const {id} = useParams();
   // console.log("id", id);

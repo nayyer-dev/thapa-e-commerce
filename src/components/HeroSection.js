@@ -62,7 +62,6 @@ const Wrapper = styled.section`
     justify-content: center;
     align-items: center;
   }
-
   figure {
     position: relative;
 
